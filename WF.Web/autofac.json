@@ -1,0 +1,75 @@
+{
+  "defaultAssembly": "WF.MsSql",
+  "components": [
+    {
+      "type": "WF.MsSql.SampleContext"
+    },
+    {
+      "type": "WF.MsSql.MICHRContext"
+    },
+    {
+      "type": "WF.MsSql.Implementation.DocumentRepository",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.IDocumentRepository, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.WorkflowSchemeRepository",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.IWorkflowSchemeRepository, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.EmployeeRepository",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.IEmployeeRepository, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.SettingsProvider",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.ISettingsProvider, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.PersistenceProviderContainer",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.IPersistenceProviderContainer, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.InboxRepository",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.IInboxRepository, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.RoleRepository",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.IRoleRepository, WF.Business"
+        }
+      ]
+    },
+    {
+      "type": "WF.MsSql.Implementation.CommandStateRepository",
+      "services": [
+        {
+          "type": "WF.Business.DataAccess.ICommandStateRepository, WF.Business"
+        }
+      ]
+    }
+  ]
+}

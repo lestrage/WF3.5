@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "Workflow scheme list";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model WF.Web.Models.WorkflowListModel
+@functions {
+
+    string GetActionName()
+    {
+        return ViewContext.RouteData.Values["action"].ToString() == "Index" ? string.Empty : "/Document/" + ViewContext.RouteData.Values["action"].ToString();
+    }
+
+}
+<div class="wfe-application-toolbar">
+    <input type="text" id="schemename" value="" class="text-box single-line"/>
+    <a onclick="CreateWorkflowScheme()" href="javascript:void(0)" class="ui primary button">CreateOrUpdate</a>
+    <a onclick="DeleteSelected()" href="javascript:void(0)" class="ui secondary button">Delete</a>
+</div>
+<table class="grid">
+    <tbody>
+        <tr class="grid-header">
+            <th style="width:20px">#</th>
+            <th style="width:20px">STT</th>
+            <th>Workflow Code</th>
+            <th>#</th>
+        </tr>
+        @foreach (var item in Model.WorkflowSchemeData)
+        {
+            <tr>
+                <td><div class="ui checkbox"><input type="checkbox" name="checkedbox" class="selectedValues" value="@item.WorkflowCode" /><label></label></div> </td>
+                <td>@item.STT</td>
+                <td><a href="/Designer/Index?schemeName=@item.WorkflowCode" title="Edit" target="_blank">@item.WorkflowCode</a></td>                
+                <td>
+                    <a href="/Designer/Index?schemeName=@item.WorkflowCode" title="Edit" target="_blank"><i class="glyphicon glyphicon-edit"></i></a>
+                    <a href="javascript:void(0)" onclick='DeleteItem("@item.WorkflowCode")' title="Remove" target="_blank"><i class="glyphicon glyphicon-remove-circle"></i></a>
+                    <a style="display:none" href="/Document/Edit?Id=&SchemeName=@item.WorkflowCode" title="Add document" target="_blank"><i class="glyphicon glyphicon-plus"></i></a>
+                </td>
+            </tr>
+        }
+</table>
+Current Page: @Html.Raw(Model.Page + 1)<br />
+Items count: @Model.Count <br />
+
+@if (Model.Page != 0)
+{
+    <a href="@GetActionName()?page=0">fist page</a>
+}
+
+@if (Model.Page > 0)
+{
+    <a href="@GetActionName()?page=@(Model.Page - 1)">prev page</a>
+}
+
+@if ((Model.Page + 1) * Model.PageSize < Model.Count)
+{
+    <a href="@GetActionName()?page=@(Model.Page + 1)">next page</a>
+}
+
+@if ((Model.Page + 2) * Model.PageSize < Model.Count)
+{
+    <a href="@GetActionName()?page=@((int)(Model.Count / Model.PageSize))">last page</a>
+}
+
+<script>
+    function CreateWorkflowScheme() {
+        var scheme = document.getElementById("schemename");
+        
+        if (scheme.value.trim() == "") {
+            alert('Nhập tên workflow!');
+        }
+        else {
+            window.location.href = "/Designer/Index?schemeName=" + scheme.value;
+        }
+    }
+
+    var schemex = document.getElementById("schemename");
+    schemex.onkeyup = function(){
+        this.value = this.value.toUpperCase();
+    }
+
+    function DeleteItem(schemeName) {
+        var data = new Array();
+        var selectedValues = [];
+        selectedValues.push(schemeName);
+
+        if (selectedValues.length < 1) {
+            alert('Please, select rows for deleting!');
+            return;
+        }
+
+        for (var i = 0; i < selectedValues.length; i++) {
+            data.push({ name: 'ids', value: selectedValues[i] });
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteScheme", "Document")",
+            data: data,
+            success: function(msg) {
+                alert(msg);
+                location.reload();
+            }
+        });
+    }
+
+    function DeleteSelected() {
+        var data = new Array();
+        var selectedValues = $('.selectedValues:checked');
+
+        if (selectedValues.length < 1) {
+            alert('Please, select rows for deleting!');
+            return;
+        }
+
+        for (var i = 0; i < selectedValues.length; i++) {
+            data.push({ name: 'ids', value: selectedValues[i].value });
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteScheme", "Document")",
+            data: data,
+            success: function(msg) {
+                alert(msg);
+                location.reload();
+            }
+        });
+    }
+</script>
