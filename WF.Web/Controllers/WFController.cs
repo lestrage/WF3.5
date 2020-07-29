@@ -190,6 +190,21 @@ namespace WF.Web.Controllers
         }
 
         [HttpPost]
+        [Route("api/statenameofdocument/{id}")]
+        public Response<DocumentStateModel> GetStateNameOfDocument(Guid id)
+        {
+            try
+            {
+                var data = _documentRepository.GetStateNameOfDocument(id);
+                return new Response<DocumentStateModel>(1, "Success", data);
+            }
+            catch (Exception ex)
+            {
+                return new Response<DocumentStateModel>(-1, ex.Message, new DocumentStateModel() { StateName = string.Empty, IsFinished = null });
+            }
+        }
+        
+        [HttpPost]
         [Route("api/documentbystatename")]
         public Response<List<DocumentState>> GetDocumentByStateName([FromBody] DocumentByStateName data)
         {

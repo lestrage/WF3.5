@@ -897,5 +897,34 @@ namespace WF.MsSql.Implementation
                 throw ex;
             }
         }
+
+        public DocumentStateModel GetStateNameOfDocument(Guid documentId)
+        {
+            try
+            {
+                var data = _sampleContext.Documents.FirstOrDefault(x => x.Id == documentId);
+                if (data != null)
+                {
+                    return new DocumentStateModel()
+                    {
+                        StateName = data.StateName,
+                        IsFinished = data.IsFinished
+                    };
+                }
+                return new DocumentStateModel()
+                {
+                    StateName = string.Empty,
+                    IsFinished = null
+                };
+            }
+            catch (Exception)
+            {
+                return new DocumentStateModel()
+                {
+                    StateName = string.Empty,
+                    IsFinished = null
+                };
+            }
+        }
     }
 }

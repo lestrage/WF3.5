@@ -42,4 +42,10 @@ namespace WF.Business.Model
         public DateTime? InitialTime { get; set; }
         public DateTime? EndTime { get; set; }
     }
+
+    public class DocumentStateModel
+    {
+        public string StateName { get; set; }
+        public bool? IsFinished { get; set; }
+    }
 }

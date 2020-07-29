@@ -38,5 +38,6 @@ namespace WF.Business.DataAccess
         List<Guid> GetDocumentInHistoryByUser(List<Guid> documentId, Guid userId);
         void PushNotificationForAll(Guid documentId, string userId, string mess);
         List<DocumentTransitionHistoryModel> GetAllHistoryForBaoCao(List<Guid> dataHoSoId);
+        DocumentStateModel GetStateNameOfDocument(Guid documentId);
     }
 }
