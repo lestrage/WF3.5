@@ -11,6 +11,7 @@ namespace WF.Web.Models
         public int Count { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
+        public int TotalPage { get; set; }
         public List<WorkflowSchemeDetails> WorkflowSchemeData { get; set; }
     }
 

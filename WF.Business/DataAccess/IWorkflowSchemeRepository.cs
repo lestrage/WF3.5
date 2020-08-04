@@ -8,6 +8,6 @@ namespace WF.Business.DataAccess
 {
     public interface IWorkflowSchemeRepository
     {
-        List<Model.WorkflowScheme> Get(out int count, int page = 0, int pageSize = 128);
+        List<Model.WorkflowScheme> Get(out int count, int page = 0, int pageSize = 10, string textSearch = "");
     }
 }

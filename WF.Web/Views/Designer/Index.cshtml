@@ -11,14 +11,19 @@
 <script src="/js/json5.js" type="text/javascript"></script>
 <script src="/js/jquery.auto-complete.min.js" type="text/javascript"></script>
 
+<div style="text-align: center; color: tomato; font-size: xx-large; margin-bottom: 50px">
+    <span>THIẾT KẾ QUY TRÌNH</span>
+</div>
+
 <form action="" id="uploadform" method="post" enctype="multipart/form-data" onsubmit="tmp()" style="padding-bottom: 8px;">
     <div>
-        <a href="javascript:OnNew()" class="ui secondary button hidden">New scheme</a>        
-        <a href="javascript:DownloadScheme()" class="ui primary button">Download XML</a>
-        <a href="javascript:SelectScheme('wfe')" class="ui secondary button">Upload XML</a>
-        <a href="javascript:OnSave()" class="ui primary button">Save scheme</a>
-        <a href="javascript:DownloadSchemeBPMN()" class="ui secondary button hidden">Download BPMN2</a>
-        <a href="javascript:SelectScheme('bpmn')" class="ui secondary button hidden">Upload BPMN2</a>
+        <a href="javascript:OnNew()" class="ui secondary button hidden"><i class="fa fa-plus"></i> New scheme</a>
+        <a href="javascript:DownloadScheme()" class="ui primary button"><i class="fa fa-download"></i> Download XML</a>
+        <a href="javascript:SelectScheme('wfe')" class="ui secondary button"><i class="fa fa-upload"></i> Upload XML</a>
+        <a href="javascript:OnSave()" class="ui primary button"><i class="fa fa-floppy-o"></i> Save scheme</a>
+        <a href="javascript:DownloadSchemeBPMN()" class="ui secondary button hidden"> Download BPMN2</a>
+        <a href="javascript:SelectScheme('bpmn')" class="ui secondary button hidden"> Upload BPMN2</a>
+        <a href="/" class="ui secondary button"><i class="fa fa-home"></i> Home</a>
     </div>
     <input type="file" name="uploadFile" id="uploadFile" style="display:none" onchange="javascript: UploadScheme();">
 </form>
@@ -111,52 +116,52 @@
 
     $(window).resize();
 
-function DownloadScheme(){
-    wfdesigner.downloadscheme();
-}
-
-function DownloadSchemeBPMN() {
-    wfdesigner.downloadschemeBPMN();
-}
-
-var selectSchemeType;
-function SelectScheme(type) {
-    if (type)
-        selectSchemeType = type;
-
-    var file = $('#uploadFile');
-    file.trigger('click');
-}
-
-function UploadScheme() {
-
-    if (selectSchemeType == "bpmn") {
-        wfdesigner.uploadschemeBPMN($('#uploadform')[0], function () {
-            wfdesigner.autoarrangement();
-            alert('The file is uploaded!');
-        });
+    function DownloadScheme() {
+        wfdesigner.downloadscheme();
     }
-    else {
-        wfdesigner.uploadscheme($('#uploadform')[0], function () {
-            alert('The file is uploaded!');
-        });
-    }
-}
 
-function OnSave() {
-    wfdesigner.schemecode = schemecode;
+    function DownloadSchemeBPMN() {
+        wfdesigner.downloadschemeBPMN();
+    }
 
-    var err = wfdesigner.validate();
-    if (err != undefined && err.length > 0) {
-        alert(err);
+    var selectSchemeType;
+    function SelectScheme(type) {
+        if (type)
+            selectSchemeType = type;
+
+        var file = $('#uploadFile');
+        file.trigger('click');
     }
-    else {
-        wfdesigner.save(function () {
-            alert('The scheme is saved!');
-        });
+
+    function UploadScheme() {
+
+        if (selectSchemeType == "bpmn") {
+            wfdesigner.uploadschemeBPMN($('#uploadform')[0], function () {
+                wfdesigner.autoarrangement();
+                alert('The file is uploaded!');
+            });
+        }
+        else {
+            wfdesigner.uploadscheme($('#uploadform')[0], function () {
+                alert('The file is uploaded!');
+            });
+        }
     }
-}
-function OnNew() {
-    wfdesigner.create();
-}
+
+    function OnSave() {
+        wfdesigner.schemecode = schemecode;
+
+        var err = wfdesigner.validate();
+        if (err != undefined && err.length > 0) {
+            alert(err);
+        }
+        else {
+            wfdesigner.save(function () {
+                alert('The scheme is saved!');
+            });
+        }
+    }
+    function OnNew() {
+        wfdesigner.create();
+    }
 </script>

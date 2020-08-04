@@ -11,66 +11,196 @@
     }
 
 }
-<div class="wfe-application-toolbar">
-    <input type="text" id="schemename" value="" class="text-box single-line"/>
-    <a onclick="CreateWorkflowScheme()" href="javascript:void(0)" class="ui primary button">CreateOrUpdate</a>
-    <a onclick="DeleteSelected()" href="javascript:void(0)" class="ui secondary button">Delete</a>
+
+<style>
+    .table > tbody > tr > td {
+        vertical-align: middle
+    }
+
+    .btn-custom {
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+
+    .checkbox-custom {
+        width: 20px;
+        height: 20px
+    }
+</style>
+
+<div style="text-align: center; color: tomato; font-size: xx-large; margin-bottom: 50px">
+    <span>PHÂN HỆ QUẢN TRỊ QUY TRÌNH</span>
 </div>
-<table class="grid">
-    <tbody>
-        <tr class="grid-header">
-            <th style="width:20px">#</th>
-            <th style="width:20px">STT</th>
-            <th>Workflow Code</th>
-            <th>#</th>
-        </tr>
-        @foreach (var item in Model.WorkflowSchemeData)
-        {
-            <tr>
-                <td><div class="ui checkbox"><input type="checkbox" name="checkedbox" class="selectedValues" value="@item.WorkflowCode" /><label></label></div> </td>
-                <td>@item.STT</td>
-                <td><a href="/Designer/Index?schemeName=@item.WorkflowCode" title="Edit" target="_blank">@item.WorkflowCode</a></td>                
-                <td>
-                    <a href="/Designer/Index?schemeName=@item.WorkflowCode" title="Edit" target="_blank"><i class="glyphicon glyphicon-edit"></i></a>
-                    <a href="javascript:void(0)" onclick='DeleteItem("@item.WorkflowCode")' title="Remove" target="_blank"><i class="glyphicon glyphicon-remove-circle"></i></a>
-                    <a style="display:none" href="/Document/Edit?Id=&SchemeName=@item.WorkflowCode" title="Add document" target="_blank"><i class="glyphicon glyphicon-plus"></i></a>
-                </td>
-            </tr>
-        }
-</table>
-Current Page: @Html.Raw(Model.Page + 1)<br />
-Items count: @Model.Count <br />
 
-@if (Model.Page != 0)
+@using (Html.BeginForm("WorkflowScheme", "Document", FormMethod.Get))
 {
-    <a href="@GetActionName()?page=0">fist page</a>
+
+<div class="wfe-application-toolbar">
+    <input type="text" id="schemename" value="@ViewBag.textSearch" name="textSearch" class="text-box" />
+    <button type="submit" class="ui primary button"><i class="fa fa-search"></i> Tìm kiếm</button>
+    <a onclick="CreateWorkflowScheme()" href="javascript:void(0)" class="ui primary button"><i class="fa fa-plus"></i> Tạo mới</a>
+    <a onclick="DeleteSelected()" href="javascript:void(0)" class="ui secondary button"><i class="fa fa-trash"></i> Xoá</a>
+    <a href="/" class="ui secondary button"><i class="fa fa-refresh"></i> Tải lại</a>
+</div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover" id="tblWorkflow">
+            <thead>
+                <tr class="grid-header">
+                    <th style="width: 3%">#</th>
+                    <th style="width: 5%">STT</th>
+                    <th style="width: 50%">Mã quy trình</th>
+                    <th style="width: 25%">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.WorkflowSchemeData)
+                {
+                    <tr>
+                        <td>
+                            <input class="form-check-input checkbox-custom" type="checkbox" value="@item.WorkflowCode" id="checkedScheme">
+                        </td>
+                        <td>@item.STT</td>
+                        <td><a href="/Designer/Index?schemeName=@item.WorkflowCode" title="Edit">@item.WorkflowCode</a></td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-custom btn-primary btn-icon-only btn-grid-circle-button"
+                                    title="Cập nhật"
+                                    onclick='EditScheme("@item.WorkflowCode")'>
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-custom btn-danger btn-icon-only btn-grid-circle-button"
+                                    title="Xóa Scheme"
+                                    onclick='DeleteItem("@item.WorkflowCode")'>
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <ul class="pagination pull-right ">
+            @{
+                int numberPage = @Model.TotalPage; // Tổng số trang hiện thị pagination
+                int pageCurrent = @Model.Page + 1; // Trang hiện tại
+                int offset = @Model.PageSize; // Số lượng bản ghi 1 trang
+
+                string searchString = @ViewBag.textSearch; // Tìm kiếm search string
+                string pageSize = @ViewBag.pageSize.ToString();
+
+                //config FirstLink
+                if (pageCurrent > 1)
+                {
+                    int prevPage = pageCurrent - 1;
+                    var PrevLink = new Dictionary<string, string>
+                    {
+                        {"page", (prevPage - 1).ToString()},
+                        {"pageSize", pageSize},
+                        {"textSearch", searchString}
+                    };
+                    <li><a asp-controller="Document" asp-action="WorkflowScheme" asp-all-route-data="PrevLink">Previous</a></li>
+                }
+
+                int from = pageCurrent - offset;
+                int to = pageCurrent + offset;
+                if (from <= 0)
+                {
+                    from = 1;
+                    to = offset * 2;
+                }
+
+                if (to > numberPage)
+                {
+                    to = numberPage;
+                }
+
+                int i;
+                for (i = from; i <= to; i++)
+                {
+                    var parms = new Dictionary<string, string>
+                    {
+                        {"page", (i - 1).ToString()},
+                        {"pageSize", pageSize},
+                        {"textSearch", searchString}
+                    };
+                    if (pageCurrent == i)
+                    {
+                        <li class="active"><a asp-controller="Document" asp-action="WorkflowScheme" asp-all-route-data="parms">@i</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Document" asp-action="WorkflowScheme" asp-all-route-data="parms">@i</a></li>
+                    }
+                }
+
+                if (pageCurrent < numberPage)
+                {
+                    int nextPage = pageCurrent + 1;
+                    var NextLink = new Dictionary<string, string>
+                    {
+                        {"page", (nextPage - 1).ToString()},
+                        {"pageSize", pageSize},
+                        {"textSearch", searchString}
+                    };
+                    <li><a asp-controller="Document" asp-action="WorkflowScheme" asp-all-route-data="NextLink">Next</a></li>
+                }
+
+                if (pageCurrent < numberPage - (to / 2))
+                {
+                    var LastLink = new Dictionary<string, string>
+                    {
+                        {"page", (numberPage - 1).ToString()},
+                        {"pageSize", pageSize},
+                        {"textSearch", searchString}
+                    };
+                    <li><a asp-controller="Document" asp-action="WorkflowScheme" asp-all-route-data="LastLink">Last</a></li>
+                }
+            }
+        </ul>
+
+        @Html.DropDownList("pageSize",
+            new List<SelectListItem>
+            {
+                new SelectListItem {Text = "10", Value = "10"},
+                new SelectListItem {Text = "25", Value = "25"},
+                new SelectListItem {Text = "50", Value = "50"}
+            },
+            new
+            {
+                @class = "form-control pull-right",
+                @style = "width: 5%; margin: 20px 10px",
+                @onchange = "changePageSize(this)"
+            })
+
+    </div>
 }
 
-@if (Model.Page > 0)
-{
-    <a href="@GetActionName()?page=@(Model.Page - 1)">prev page</a>
-}
-
-@if ((Model.Page + 1) * Model.PageSize < Model.Count)
-{
-    <a href="@GetActionName()?page=@(Model.Page + 1)">next page</a>
-}
-
-@if ((Model.Page + 2) * Model.PageSize < Model.Count)
-{
-    <a href="@GetActionName()?page=@((int)(Model.Count / Model.PageSize))">last page</a>
-}
 
 <script>
+    function changePageSize(obj) {
+        var selectedSize = obj.value;
+        window.location.href = "/?page=0&pageSize=" + selectedSize;
+    }
+
+
     function CreateWorkflowScheme() {
-        var scheme = document.getElementById("schemename");
-        
-        if (scheme.value.trim() == "") {
-            alert('Nhập tên workflow!');
-        }
-        else {
-            window.location.href = "/Designer/Index?schemeName=" + scheme.value;
-        }
+        bootbox.prompt({
+            title: "Nhập tên Workflow!",
+            centerVertical: true,
+            callback: function(result){
+                //console.log(result);
+                if (result !== null && result !== "") {
+                    result = result.toUpperCase();
+                    window.location.href = "/Designer/Index?schemeName=" + result;
+                } else {
+
+                }
+            }
+        });
     }
 
     var schemex = document.getElementById("schemename");
@@ -78,51 +208,94 @@ Items count: @Model.Count <br />
         this.value = this.value.toUpperCase();
     }
 
+    function EditScheme(schemeName) {
+        window.open("/Designer/Index?schemeName=" + schemeName);
+    }
+
     function DeleteItem(schemeName) {
-        var data = new Array();
-        var selectedValues = [];
-        selectedValues.push(schemeName);
+        bootbox.confirm({
+            title: "Xóa Workflow",
+            message: "Bạn có muốn xóa Workflow: " + schemeName,
+            buttons: {
+                confirm: {
+                    label: '<i class="fa fa-check"></i> Confirm'
+                },
+                cancel: {
+                    label: '<i class="fa fa-times"></i> Cancel'
+                }
+            },
+            callback: function (result) {
+                if (result === true) {
+                    var data = new Array();
+                    var selectedValues = [];
+                    selectedValues.push(schemeName);
 
-        if (selectedValues.length < 1) {
-            alert('Please, select rows for deleting!');
-            return;
-        }
+                    if (selectedValues.length < 1) {
+                        alert('Please, select rows for deleting!');
+                        return;
+                    }
 
-        for (var i = 0; i < selectedValues.length; i++) {
-            data.push({ name: 'ids', value: selectedValues[i] });
-        }
+                    for (var i = 0; i < selectedValues.length; i++) {
+                        data.push({ name: 'ids', value: selectedValues[i] });
+                    }
 
-        $.ajax({
-            type: "POST",
-            url: "@Url.Action("DeleteScheme", "Document")",
-            data: data,
-            success: function(msg) {
-                alert(msg);
-                location.reload();
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("DeleteScheme", "Document")",
+                        data: data,
+                        success: function(msg) {
+                            bootbox.alert(msg, function () {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
             }
         });
     }
 
     function DeleteSelected() {
         var data = new Array();
-        var selectedValues = $('.selectedValues:checked');
+        var selectedValues = new Array();
+
+        $("#tblWorkflow input[type=checkbox]:checked").each(function () {
+            selectedValues.push(this.value);
+        });
 
         if (selectedValues.length < 1) {
-            alert('Please, select rows for deleting!');
+            bootbox.alert("Bạn chưa chọn Workflow Scheme", function () {
+            });
             return;
         }
 
-        for (var i = 0; i < selectedValues.length; i++) {
-            data.push({ name: 'ids', value: selectedValues[i].value });
-        }
+         bootbox.confirm({
+            title: "Xóa Workflow",
+            message: "Bạn có muốn xóa những Workflow này ?",
+            buttons: {
+                confirm: {
+                    label: '<i class="fa fa-check"></i> Confirm'
+                },
+                cancel: {
+                    label: '<i class="fa fa-times"></i> Cancel'
+                }
+            },
+            callback: function (result) {
+                if (result === true) {
+                    for (var i = 0; i < selectedValues.length; i++) {
+                        data.push({ name: 'ids', value: selectedValues[i] });
+                    }
 
-        $.ajax({
-            type: "POST",
-            url: "@Url.Action("DeleteScheme", "Document")",
-            data: data,
-            success: function(msg) {
-                alert(msg);
-                location.reload();
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("DeleteScheme", "Document")",
+                        data: data,
+                        success: function(msg) {
+                            bootbox.alert(msg, function () {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
             }
         });
     }

@@ -43,6 +43,10 @@
     <Folder Include="Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="Extensions\" />
+    <Folder Include="wwwroot\lib\font-awesome\css\" />
+    <Folder Include="wwwroot\lib\font-awesome\fonts\" />
+    <Folder Include="wwwroot\lib\font-awesome\less\" />
+    <Folder Include="wwwroot\lib\font-awesome\scss\" />
   </ItemGroup>
 
   <ItemGroup>

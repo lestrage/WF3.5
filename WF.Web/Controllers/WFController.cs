@@ -103,7 +103,7 @@ namespace WF.Web.Controllers
 
         [HttpPost]
         [Route("api/commands")]
-        public Response<List<string>> GetAvaliableCommand([FromBody] InputCommand data)
+        public Response<List<string>> GetAvailableCommand([FromBody] InputCommand data)
         {
             try
             {
@@ -119,6 +119,27 @@ namespace WF.Web.Controllers
             catch (Exception ex)
             {
                 return new Response<List<string>>(-1, ex.Message, null);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/commandsv2")]
+        public Response<List<DocumentCommandModel>> GetAvailableCommandV2([FromBody] InputCommand data)
+        {
+            try
+            {
+                var result = new List<DocumentCommandModel>();
+                var availableProcessCommands = WorkflowInit.Runtime.GetAvailableCommands(data.DocumentId, data.UserId);
+                foreach (var workflowCommand in availableProcessCommands)
+                {
+                    if (result.Count(c => c.key == workflowCommand.CommandName) == 0)
+                        result.Add(new DocumentCommandModel() { key = workflowCommand.CommandName, value = workflowCommand.LocalizedName, Classifier = workflowCommand.Classifier });
+                }
+                return new Response<List<DocumentCommandModel>>(1, "Success", result);
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<DocumentCommandModel>>(-1, ex.Message, null);
             }
         }
 

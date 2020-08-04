@@ -43,24 +43,37 @@ namespace WF.Web.Controllers
             });
         }
 
-        public ActionResult WorkflowScheme(int page = 0)
+        public ActionResult WorkflowScheme(int page = 0, int pageSize = 10, string textSearch = "")
         {
             int count = 0;
-            const int pageSize = 15;
 
-            List<WorkflowSchemeDetails> dataWorkflowScheme = _workflowSchemeRepository.Get(out count, page, pageSize).Select(c => GetWorkflowSchemeModel(c)).ToList();
-            int i = 1;
+            if (string.IsNullOrEmpty(textSearch))
+            {
+                textSearch = "";
+            }
+
+            List<WorkflowSchemeDetails> dataWorkflowScheme = _workflowSchemeRepository.Get(out count, page, pageSize, textSearch).Select(c => GetWorkflowSchemeModel(c)).ToList();
+
+            int i = 1 + (pageSize * page);
             foreach (var item in dataWorkflowScheme)
             {
                 item.STT = i;
                 i++;
             }
+
+            float numberpage = (float) count / pageSize;
+            var totalPage = (int )Math.Ceiling(numberpage);
+
+            ViewBag.PageSize = pageSize;
+            ViewBag.TextSearch = textSearch;
+
             return View(new WorkflowListModel()
             {
                 Page = page,
                 PageSize = pageSize,
                 WorkflowSchemeData = dataWorkflowScheme,
                 Count = count,
+                TotalPage = totalPage
             });
         }
 
@@ -201,10 +214,10 @@ namespace WF.Web.Controllers
             return Content("Rows deleted");
         }
 
-        public ActionResult DeleteScheme(string[] ids)
+        public IActionResult DeleteScheme(string[] ids)
         {
             if (ids == null || ids.Length == 0)
-                return Content("Items not selected");
+                return Content("Scheme is not selected");
 
             try
             {
