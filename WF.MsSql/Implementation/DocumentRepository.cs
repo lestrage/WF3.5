@@ -579,7 +579,7 @@ namespace WF.MsSql.Implementation
                 List<DocumentHistoryViewModel> data = new List<DocumentHistoryViewModel>();
                 //&& x.FromUser != x.ToUser
                 var his = _sampleContext.DocumentTransitionHistories.Where(x => x.DocumentId == documentId
-                && x.TransitionTime != null && x.Command != "" && x.Command != null).OrderByDescending(x => x.Order);
+                && x.TransitionTime != null && x.Command != "" && x.Command != null).OrderBy(x => x.Order);
                 List<Guid> dataHisId = his.Select(x => x.Id).ToList();
                 var dataTep = _sampleContext.Ext_DocumentHitory_FileAttachs.Where(x => dataHisId.Contains(x.DocumentHistoryId)).ToList();
 
