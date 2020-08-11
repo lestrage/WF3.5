@@ -16,5 +16,6 @@ namespace WF.MsSql
         [StringLength(1024)]
         [Column("CommandName")]
         public string CommandName { get; set; }
+        public int Order { get; set; }
     }
 }

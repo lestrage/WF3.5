@@ -94,7 +94,7 @@ namespace WF.Web.Controllers
             try
             {
                 List<string> dataCommand = new List<string>();
-                dataCommand = _commandStateRepository.GetAllCommand().OrderBy(x => x.CommandName).Select(x => x.CommandName).ToList();
+                dataCommand = _commandStateRepository.GetAllCommand().OrderBy(x => x.Order).Select(x => x.CommandName).ToList();
                 return new Response<List<string>>(1, "", dataCommand);
             }
             catch (Exception ex)
